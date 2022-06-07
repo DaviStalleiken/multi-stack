@@ -1,12 +1,23 @@
-import type { NextPage } from 'next'
-import Lista from '../ui/components/Lista/Lista'
-import Titulo from '../ui/components/Titulo/Titulo'
-
-function MeuComponente(){
-  return <div>Treinamento Web</div>
-}
+import type { NextPage } from 'next';
+import Lista from '../ui/components/Lista/Lista';
+import Titulo from '../ui/components/Titulo/Titulo';
+import { Dialog, TextField, Grid, DialogActions, Button, Snackbar } from '@mui/material';
+import { useIndex } from '../data/hooks/pages/useIndex';
 
 const Home: NextPage = () => {
+  const {
+    listaPets,
+    petSelecionado,
+    setPetSelecionado,
+    email,
+    setEmail,
+    valor,
+    setValor,
+    mensagem,
+    setMensagem,
+    adotar
+  } = useIndex();
+
   return (
     <div>
       <Titulo 
@@ -19,20 +30,58 @@ const Home: NextPage = () => {
     }/>
 
       <Lista 
-        pets = {[
-          {
-            id: 1,
-            nome: 'Bidu',
-            historia: 'testestes',
-            foto: 'https://escolaeducacao.com.br/wp-content/uploads/2022/01/cachorro-fofo-1-750x430.jpg'
-          },
-          {
-            id: 2,
-            nome: 'Scooby',
-            historia: 'testestes',
-            foto: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6CobH5tn7bHhWYkwQSHn5lnoV0HL6j2fTrQ&usqp=CAU'
-          }
-        ]}
+        pets = {listaPets}
+        onSelect={(pet) => setPetSelecionado(pet)}
+      />
+
+      <Dialog 
+      open={petSelecionado !== null}
+      fullWidth
+      PaperProps={{ sx: { p: 5 } }}
+      onClose={() => setPetSelecionado(null)}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label={'E-mail'}
+              type={'email'}
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              label={'Quantia por mês'}
+              type={'number'}
+              fullWidth
+              value={valor}
+              onChange={(e) => setValor(e.target.value)}
+            />
+          </Grid>
+        </Grid>
+        <DialogActions sx={{mt: 5}} >
+          <Button
+            color={'secondary'}
+            onClick={() => setPetSelecionado(null)}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant={'contained'}
+            onClick={() => adotar()}
+          >
+            Confirmar adoção
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar 
+        open={mensagem.length > 0}
+        message={mensagem}
+        autoHideDuration={2500}
+        onClose={() => setMensagem('')}
       />
     </div>
   )
